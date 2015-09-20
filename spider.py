@@ -59,10 +59,10 @@ class DmozSpider(scrapy.Spider):
             item = DjtestItem()
             item['songLinks'] = []
             params = {}
-            item['songNumber'] = sel.xpath('.//span[contains(@id, "tracknumber_value")]/text()').extract()
-            item['songArtist'] = sel.xpath('.//*[@itemprop="byArtist"]/@content').extract()
-            item['songName'] = sel.xpath('.//*[@itemprop="name"]/@content').extract()
-            item['songPublisher'] = sel.xpath('.//*[@itemprop="publisher"]/@content').extract()
+            item['songNumber'] = ', '.join(sel.xpath('.//span[contains(@id, "tracknumber_value")]/text()').extract())
+            item['songArtist'] = ', '.join(sel.xpath('.//*[@itemprop="byArtist"]/@content').extract())
+            item['songName'] = ', '.join(sel.xpath('.//*[@itemprop="name"]/@content').extract())
+            item['songPublisher'] = ', '.join(sel.xpath('.//*[@itemprop="publisher"]/@content').extract())
             if len(item['songName']) > 0:
                 #Loop for saving links // needs to be tested, seems like it works
                 for sel in sel.xpath('.//td[contains(@id, "tlptr")]/*[@itemtype="http://schema.org/MusicRecording"]/div[contains(@id, "media_buttons")]/div[contains(@class, "s32")]'):
@@ -88,7 +88,3 @@ class DmozSpider(scrapy.Spider):
                     #item['songLinks'].append(sel.xpath('.//@onclick').extract())
                     #i+=1
                 yield item
-
-
-            
-
