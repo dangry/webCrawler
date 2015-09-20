@@ -13,7 +13,7 @@ class DjtestItem(scrapy.Item):
     # name = scrapy.Field()
     songNumber = scrapy.Field()
     songName = scrapy.Field()
-    songArtist = scrapy.Field()
+    artistName = scrapy.Field()
     songPublisher = scrapy.Field()
     songLinks = scrapy.Field()
     pass
@@ -26,4 +26,5 @@ class DjtestTracklist(scrapy.Item):
     tracklistArtist = scrapy.Field()
     tracklistDate = scrapy.Field()
     tracklistNumTracks = scrapy.Field()
+    tracklistLinks = scrapy.Field()
     pass

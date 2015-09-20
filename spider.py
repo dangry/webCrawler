@@ -14,7 +14,7 @@ class DmozSpider(scrapy.Spider):
     allowed_domains = ["www.1001tracklists.com"]
     #Url to scrap
     start_urls = [
-        "http://www.1001tracklists.com/tracklist/86683_flatland-funk-jaycen-amour-at-the-pyramid-with-flatland-funk-united-states-2015-09-20.html"
+        "http://www.1001tracklists.com/tracklist/80984_martin-garrix-at-main-stage-ultra-music-festival-europe-croatia-2015-07-11.html"
     ]
 
     def parse(self, response):
@@ -47,9 +47,11 @@ class DmozSpider(scrapy.Spider):
         for sel in response.xpath('.//*[@itemtype="http://schema.org/MusicPlaylist"]/*[@itemprop="genre"]'):
             tracklist['tracklistGenres'].append(', '.join(sel.xpath('@content').extract()))
             # i+=1
+        for sel in response.xpath('//*[@itemtype="http://schema.org/MusicRecording"]/div[contains(@id, "media_buttons")]'):
+            tracklist['tracklistLinks'] = sel.xpath("//a[@class='floatL iconHeight32']/@href").extract()
+
         yield tracklist
-        # for sel in response.xpath('//*[@itemtype="http://schema.org/MusicRecording"]/div[contains(@id, "media_buttons")]'):
-        #     print sel.xpath('.//div[contains(@class, "s32")]/@onclick').extract()
+        
         for sel in response.xpath('//tr[contains(@id, "tlp_")]'):
         # for sel in response.xpath('.//*[@itemtype="http://schema.org/MusicRecording"]'):
             #check item info, call web service, 
@@ -60,7 +62,7 @@ class DmozSpider(scrapy.Spider):
             item['songLinks'] = []
             params = {}
             item['songNumber'] = ', '.join(sel.xpath('.//span[contains(@id, "tracknumber_value")]/text()').extract())
-            item['songArtist'] = ', '.join(sel.xpath('.//*[@itemprop="byArtist"]/@content').extract())
+            item['artistName'] = ', '.join(sel.xpath('.//*[@itemprop="byArtist"]/@content').extract())
             item['songName'] = ', '.join(sel.xpath('.//*[@itemprop="name"]/@content').extract())
             item['songPublisher'] = ', '.join(sel.xpath('.//*[@itemprop="publisher"]/@content').extract())
             if len(item['songName']) > 0:
