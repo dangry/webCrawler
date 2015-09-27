@@ -3,6 +3,7 @@ import requests
 import json
 import simplejson
 import re
+import sys
 from bs4 import BeautifulSoup
 
 
@@ -11,13 +12,40 @@ from djtest.items import DjtestTracklist
 
 class DmozSpider(scrapy.Spider):
     name = "1001tracklists"
-    allowed_domains = ["www.1001tracklists.com"]
+    allowed_domains = ["www.1001tracklists.com/tracklist/"]
     #Url to scrap
-    start_urls = [
-        "http://www.1001tracklists.com/tracklist/80984_martin-garrix-at-main-stage-ultra-music-festival-europe-croatia-2015-07-11.html"
-    ]
+    # start_urls = [
+        
+    # ]
+
+    def __init__(self, *args, **kwargs): 
+      super(DmozSpider, self).__init__(*args, **kwargs) 
+
+      self.start_urls = [kwargs.get('start_url')] 
 
     def parse(self, response):
+        # for sel in response.xpath("//*[contains(@class, 'redTxt')]"):
+        #     # if sel.xpath('text()').extract() == "u'ID - ID\u2009'":
+        #     #     print "ID HERE"
+        #     var = sel.xpath('text()').extract()
+        #     var = var[0].strip()
+        #     if (var == "ID - ID") | (var[-5:] == " - ID") | (var == "ID") | (var == "(ID Remix)"):
+        #         print "UNIDENTIFIED TRACK HERE"
+        #         with open('tracklist.json', 'a') as f:
+        #             f.write("ERROR: UNIDENTIFIED TRACKS PRESENT")
+        #         sys.exit()
+        # print "SUCCESS"
+
+        
+        for sel in response.xpath(".//div[@class='redTxt floatL tlFont']"):
+            # if sel.xpath('text()').extract() == "u'ID - ID\u2009'":
+            #     print "ID HERE"
+            var = sel.xpath('text()').extract()
+            if var[0].strip() == "ID - ID":
+                print "ID HERE"
+                with open('tracklist.json', 'a') as f:
+                    f.write("ERROR: ID TRACKS PRESENT")
+                sys.exit()
         i = 0
         tracklist = DjtestTracklist()
         tracklist['tracklistGenres'] = []
