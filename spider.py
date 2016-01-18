@@ -85,7 +85,6 @@ class DmozSpider(scrapy.Spider):
             #check item info, call web service, 
             #http://www.1001tracklists.com/ajax/get_medialink.php?idObject=5&idItem=256063&idMediaType=4&viewSource=1&viewItem=827
             #store the response (whatever we can use)
-            i=0
             item = DjtestItem()
             item['songLinks'] = []
             params = {}
