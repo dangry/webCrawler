@@ -16,6 +16,7 @@ class DjtestItem(scrapy.Item):
     artistName = scrapy.Field()
     songPublisher = scrapy.Field()
     songLinks = scrapy.Field()
+    songIndex = scrapy.Field()
     pass
 
 class DjtestTracklist(scrapy.Item):
