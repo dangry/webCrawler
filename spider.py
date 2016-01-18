@@ -79,7 +79,7 @@ class DmozSpider(scrapy.Spider):
             tracklist['tracklistLinks'] = sel.xpath("//a[@class='floatL iconHeight32']/@href").extract()
 
         yield tracklist
-        
+        i=0
         for sel in response.xpath('//tr[contains(@id, "tlp_")]'):
         # for sel in response.xpath('.//*[@itemtype="http://schema.org/MusicRecording"]'):
             #check item info, call web service, 
@@ -93,6 +93,8 @@ class DmozSpider(scrapy.Spider):
             item['artistName'] = ', '.join(sel.xpath('.//*[@itemprop="byArtist"]/@content').extract())
             item['songName'] = ', '.join(sel.xpath('.//*[@itemprop="name"]/@content').extract())
             item['songPublisher'] = ', '.join(sel.xpath('.//*[@itemprop="publisher"]/@content').extract())
+            item['songIndex'] = i
+            i+=1
             if len(item['songName']) > 0:
                 #Loop for saving links // needs to be tested, seems like it works
                 for sel in sel.xpath('.//td[contains(@id, "tlptr")]/*[@itemtype="http://schema.org/MusicRecording"]/div[contains(@id, "media_buttons")]/div[contains(@class, "s32")]'):
