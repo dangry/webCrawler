@@ -70,7 +70,7 @@ class DmozSpider(scrapy.Spider):
                         tracklistArtist['artistLinks'].append(', '.join(sel2.xpath('@href').extract()))
                         #print tracklistArtist['artistLinks']
                 tracklist['tracklistArtist'].append(tracklistArtist)
-        print tracklist['tracklistArtist']
+        # print tracklist['tracklistArtist']
         # tracklist['tracklistLinks'] = response.xpath("//td[@class='left']/a/@href").extract()
         for sel in response.xpath('.//*[@itemtype="http://schema.org/MusicPlaylist"]/*[@itemprop="genre"]'):
             tracklist['tracklistGenres'].append(', '.join(sel.xpath('@content').extract()))
@@ -88,34 +88,47 @@ class DmozSpider(scrapy.Spider):
             item = DjtestItem()
             item['songLinks'] = []
             params = {}
+            var1 = sel.xpath('.//div[contains(@id, "tr")]//div//div//div//div//text()').extract()
+            try:
+                # print var1[0]
+                var2 = var1[0].split(" - ")
+            except IndexError:
+                break  
             item['songNumber'] = ', '.join(sel.xpath('.//span[contains(@id, "tracknumber_value")]/text()').extract())
-            item['artistName'] = ', '.join(sel.xpath('.//*[@itemprop="byArtist"]/@content').extract())
-            item['songName'] = ', '.join(sel.xpath('.//*[@itemprop="name"]/@content').extract())
+            item['artistName'] =  ''.join(var2[0]).encode('utf-8')
+            try:
+                item['songName'] = var2[1]
+            except IndexError:
+                item['songName'] = ', '.join(sel.xpath('.//*[@itemprop="name"]/@content').extract())    
             item['songPublisher'] = ', '.join(sel.xpath('.//*[@itemprop="publisher"]/@content').extract())
             item['songIndex'] = i
             i+=1
             if len(item['songName']) > 0:
                 #Loop for saving links // needs to be tested, seems like it works
-                for sel in sel.xpath('.//td[contains(@id, "tlptr")]/*[@itemtype="http://schema.org/MusicRecording"]/div[contains(@id, "media_buttons")]/div[contains(@class, "s32")]'):
-                    params = str(sel.xpath('.//@onclick').extract())
-                    params = params[params.find("{")-1:params.find("}")+1]
-                    params = re.sub(r'([a-z]\w+)', r'"\1"', params)
-                    dataform = str(params).strip("'<>() ").replace('\'', '\"')
-                    #print dataform
-                    j = simplejson.loads(dataform)
+                for sel in sel.xpath(".//div[contains(@class, 's32')]"):
                     try:
-                        j["idMediaType"] 
-                    except KeyError:
-                        j["idMediaType"] = 1
-                    r = requests.get("http://www.1001tracklists.com/ajax/get_medialink.php?idObject="+str(j["idObject"])+"&idItem="+str(j["idItem"])+"&idMediaType="+str(j["idMediaType"])+"&viewSource="+str(j["viewSource"])+"&viewItem="+str(j["viewItem"]))
-                    rJson = r.json()
-                    rJsonPlayer = rJson["data"][0]["player"]
-                    soup = BeautifulSoup(rJsonPlayer, 'html.parser')
-                    # rJsonPlayerParsed = rJsonPlayer.replace("\\", "")
-                    item['songLinks'].append(soup.iframe['src'])
-                    # print j
-                    # r = requests.get("http://api.soundcloud.com/tracks/220209001?client_id=ybtyKcnlhP3RKXpJ58fg&format=json")
-                    print soup.iframe['src']
-                    #item['songLinks'].append(sel.xpath('.//@onclick').extract())
-                    #i+=1
+                        params = str(sel.xpath('.//@onclick').extract())
+                        params = params[params.find("{")-1:params.find("}")+1]
+                        params = re.sub(r'([a-z]\w+)', r'"\1"', params)
+                        dataform = str(params).strip("'<>() ").replace('\'', '\"')
+                        #print dataform
+                        j = simplejson.loads(dataform)
+                        try:
+                            j["idMediaType"] 
+                        except KeyError:
+                            j["idMediaType"] = 1
+                        r = requests.get("http://www.1001tracklists.com/ajax/get_medialink.php?idObject="+str(j["idObject"])+"&idItem="+str(j["idItem"])+"&idMediaType="+str(j["idMediaType"])+"&viewSource="+str(j["viewSource"])+"&viewItem="+str(j["viewItem"]))
+                        rJson = r.json()
+                        rJsonPlayer = rJson["data"][0]["player"]
+                        soup = BeautifulSoup(rJsonPlayer, 'html.parser')
+                        # rJsonPlayerParsed = rJsonPlayer.replace("\\", "")
+                        item['songLinks'].append(soup.iframe['src'])
+                        # print j
+                        # r = requests.get("http://api.soundcloud.com/tracks/220209001?client_id=ybtyKcnlhP3RKXpJ58fg&format=json")
+                        # print soup.iframe['src']
+                        #item['songLinks'].append(sel.xpath('.//@onclick').extract())
+                        #i+=1
+                    except:
+                        print "Error"
+                        # break     
                 yield item
