@@ -121,14 +121,24 @@ class DmozSpider(scrapy.Spider):
                         rJson = r.json()
                         rJsonPlayer = rJson["data"][0]["player"]
                         soup = BeautifulSoup(rJsonPlayer, 'html.parser')
-                        # rJsonPlayerParsed = rJsonPlayer.replace("\\", "")
                         item['songLinks'].append(soup.iframe['src'])
-                        # print j
-                        # r = requests.get("http://api.soundcloud.com/tracks/220209001?client_id=ybtyKcnlhP3RKXpJ58fg&format=json")
-                        # print soup.iframe['src']
-                        #item['songLinks'].append(sel.xpath('.//@onclick').extract())
-                        #i+=1
+                        if "embed.beatport.com" in soup.iframe['src']:
+                            print "FOUND BEATPORT HERE"
+                            r2 = requests.get(soup.iframe['src'])
+                            soup2 = BeautifulSoup(r2.text, 'html.parser')
+                            # print(soup2.prettify())
+                            beatportUrl = soup2.find(id="input-share-link").get('value')
+                            r3 = requests.get(beatportUrl)
+                            soup3 = BeautifulSoup(r3.text, 'html.parser')
+                            soup4 = soup3.find("li", class_='interior-track-content-item interior-track-bpm')
+                            soup5 = soup3.find("li", class_='interior-track-content-item interior-track-key')
+                            bpmVar = soup4.find("span", class_='value').text
+                            keyVar = soup5.find("span", class_='value').text.encode('utf-8')
+                            print "BPM IS: " + bpmVar
+                            print "KEY IS: " + keyVar
+                            item['songBpm'] = bpmVar
+                            item['songKey'] = keyVar
                     except:
-                        print "Error"
+                        pass
                         # break     
                 yield item
