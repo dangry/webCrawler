@@ -75,8 +75,8 @@ class DmozSpider(scrapy.Spider):
         for sel in response.xpath('.//*[@itemtype="http://schema.org/MusicPlaylist"]/*[@itemprop="genre"]'):
             tracklist['tracklistGenres'].append(', '.join(sel.xpath('@content').extract()))
             # i+=1
-        for sel in response.xpath('//*[@itemtype="http://schema.org/MusicRecording"]/div[contains(@id, "media_buttons")]'):
-            tracklist['tracklistLinks'] = sel.xpath("//a[@class='floatL iconHeight32']/@href").extract()
+        # for sel in response.xpath('//*[@itemtype="http://schema.org/MusicRecording"]/div[contains(@id, "media_buttons")]'):
+        tracklist['tracklistLinks'] = sel.xpath("//a[@class='floatL iconHeight32']/@href").extract()
 
         yield tracklist
         i=0
@@ -113,11 +113,12 @@ class DmozSpider(scrapy.Spider):
                         dataform = str(params).strip("'<>() ").replace('\'', '\"')
                         #print dataform
                         j = simplejson.loads(dataform)
+                        print j
                         try:
                             j["idMediaType"] 
                         except KeyError:
                             j["idMediaType"] = 1
-                        r = requests.get("http://www.1001tracklists.com/ajax/get_medialink.php?idObject="+str(j["idObject"])+"&idItem="+str(j["idItem"])+"&idMediaType="+str(j["idMediaType"])+"&viewSource="+str(j["viewSource"])+"&viewItem="+str(j["viewItem"]))
+                        r = requests.get("http://www.1001tracklists.com/ajax/get_medialink.php?idObject="+str(j["idObject"])+"&idItem="+str(j["idItem"])+"&idSource="+str(j["idSource"])+"&viewSource="+str(j["viewSource"])+"&viewItem="+str(j["viewItem"]))
                         rJson = r.json()
                         rJsonPlayer = rJson["data"][0]["player"]
                         soup = BeautifulSoup(rJsonPlayer, 'html.parser')
@@ -140,5 +141,4 @@ class DmozSpider(scrapy.Spider):
                             item['songKey'] = keyVar
                     except:
                         pass
-                        # break     
                 yield item
