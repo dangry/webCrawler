@@ -94,8 +94,22 @@ class DmozSpider(scrapy.Spider):
                 var2 = var1[0].split(" - ")
             except IndexError:
                 break  
+            #Changes 
+            print "START CHANGES"   
+            testString = sel.xpath(".//div[contains(@class,'trackFormat')]/span[1]/text() | .//div[contains(@class,'trackFormat')]/span/following-sibling::text()[1]").extract()
+            print testString
+            testString = map(unicode.strip, testString)
+            testString = ' '.join(testString)
+            print testString
+            testString = testString.replace(" (  )", "")
+            testString = testString.replace(" ( )", "")
+            testString = testString.replace(u"\u00A0", " ")
+            print testString.strip()
+            print "END CHANGES"
+            #Changes    
             item['songNumber'] = ', '.join(sel.xpath('.//span[contains(@id, "tracknumber_value")]/text()').extract())
-            item['artistName'] =  ''.join(var2[0]).encode('utf-8')
+            # item['artistName'] =  ''.join(var2[0]).encode('utf-8')
+            item['artistName'] =  testString.strip()
             try:
                 item['songName'] = var2[1]
             except IndexError:
