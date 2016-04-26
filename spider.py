@@ -100,7 +100,7 @@ class DmozSpider(scrapy.Spider):
             print testString
             testString = map(unicode.strip, testString)
             testString = ' '.join(testString)
-            print testString
+            #print testString
             testString = testString.replace(" (  )", "")
             testString = testString.replace(" ( )", "")
             testString = testString.replace(u"\u00A0", " ")
