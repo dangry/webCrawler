@@ -8,7 +8,7 @@
 import scrapy
 
 
-class DjtestItem(scrapy.Item):
+class DjcrawlerItem(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
     songNumber = scrapy.Field()
@@ -21,7 +21,7 @@ class DjtestItem(scrapy.Item):
     songBpm = scrapy.Field()
     pass
 
-class DjtestTracklist(scrapy.Item):
+class DjcrawlerTracklist(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
     tracklistName = scrapy.Field()
