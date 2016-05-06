@@ -7,7 +7,7 @@ import sys
 from bs4 import BeautifulSoup
 
 
-from djCrawler.items import DjcrawlertItem
+from djCrawler.items import DjcrawlerItem
 from djCrawler.items import DjcrawlerTracklist
 
 class DmozSpider(scrapy.Spider):
