@@ -47,7 +47,7 @@ class DmozSpider(scrapy.Spider):
                     f.write("ERROR: ID TRACKS PRESENT")
                 sys.exit()
         i = 0
-        tracklist = DjtestTracklist()
+        tracklist = DjcrawlerTracklist()
         tracklist['tracklistGenres'] = []
         tracklist['tracklistName'] = response.xpath('.//*[@itemtype="http://schema.org/MusicPlaylist"]/*[@itemprop="name"]/@content').extract()
         #tracklist['tracklistArtist'] = response.xpath('.//*[@itemtype="http://schema.org/MusicPlaylist"]/*[@itemprop="author"]/@content').extract()
